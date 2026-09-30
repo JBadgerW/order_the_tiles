@@ -104,6 +104,7 @@ Tiles are square. If the picture's shape doesn't match `cols : rows`, it is crop
 | `order` | all | A number that sets the menu position (lower comes first); otherwise puzzles are listed alphabetically |
 | `drag` | all | `"insert"` makes a dropped tile slide into place while the others shift over (the default is `"swap"`) |
 | `columns` | text | A fixed number of columns in place of the automatic layout |
+| `credit` | all | Small print under the puzzle, e.g. `{"text": "World Map with Countries – GISGeography", "url": "https://gisgeography.com/world-map/"}` shows **Source: <link>**. Add `"prefix"` to change the word "Source:" |
 | `thumb` | image | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
 
 ## Files

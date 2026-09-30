@@ -45,10 +45,13 @@ export async function prepare(puzzle) {
 
   return {
     tiles,
-    configureBoard(board) {
+    // The wrapper gets the size so anything under the board (like a credit)
+    // lines up with the picture's edges.
+    configureBoard(board, wrapper) {
       board.classList.add('image-board');
-      board.style.setProperty('--cols', cols);
-      board.style.setProperty('--rows', rows);
+      wrapper.classList.add('image-wrap');
+      wrapper.style.setProperty('--cols', cols);
+      wrapper.style.setProperty('--rows', rows);
     },
   };
 }

@@ -1,10 +1,10 @@
 {
-  "title": "World Map",
+  "title": "World Map: Harder",
   "type": "image",
   "description": "Put the continents and oceans back where they belong.",
   "src": "images/world_map.png",
-  "rows": 3,
-  "cols": 6,
+  "rows": 4,
+  "cols": 8,
   "credit": {
     "text": "World Map with Countries – GISGeography",
     "url": "https://gisgeography.com/high-resolution-world-map/"

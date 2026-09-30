@@ -110,6 +110,7 @@ async function showPuzzle(id) {
   const board = createBoard({
     tiles,
     configureBoard,
+    footer: creditLine(puzzle.credit),
     dragStyle: puzzle.drag || type.defaultDrag,
     easy: mode === 'easy',
     onChange() { moveCount.textContent = String(++moves); },
@@ -140,6 +141,16 @@ async function showPuzzle(id) {
     board.element,
   ));
   started = performance.now();
+}
+
+// Attribution for borrowed material, shown in small print under the puzzle:
+// "credit": { "text": "…", "url": "…" }  →  Source: <link>
+function creditLine(credit) {
+  if (!credit?.text) return null;
+  const label = credit.url
+    ? el('a', { href: credit.url, target: '_blank', rel: 'noopener' }, credit.text)
+    : credit.text;
+  return el('p', { class: 'credit' }, `${credit.prefix ?? 'Source:'} `, label);
 }
 
 function celebrate({ time, rate, moves }, mode) {

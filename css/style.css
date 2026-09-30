@@ -215,13 +215,15 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 .text-board.solved .text-tile { border-color: transparent; background: color-mix(in srgb, var(--correct-soft), var(--surface)); }
 
 /* Image tiles: the board keeps the picture's shape and fits the screen */
+.image-wrap {
+  width: min(100%, calc((100dvh - 215px) * var(--cols) / var(--rows)));
+  min-width: min(100%, 320px);
+  margin: 0 auto;
+}
 .image-board {
   --gap: 4px;
   gap: var(--gap);
   grid-template-columns: repeat(var(--cols), 1fr);
-  width: min(100%, calc((100dvh - 190px) * var(--cols) / var(--rows)));
-  min-width: min(100%, 320px);
-  margin: 0 auto;
   transition: gap .6s ease;
 }
 .image-tile {
@@ -234,6 +236,14 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 .image-tile.ghost { border-radius: 6px; }
 .image-board.solved { gap: 0; }
 .image-board.solved .image-tile { border-radius: 0; box-shadow: none; }
+
+/* Small-print source credit under the puzzle */
+.credit {
+  margin: 8px 2px 0; text-align: right;
+  font-size: .75rem; line-height: 1.4; color: var(--ink-soft);
+}
+.credit a { color: inherit; text-underline-offset: 2px; }
+.credit a:hover { color: var(--accent); }
 
 /* ---------- Win overlay ---------- */
 .overlay {

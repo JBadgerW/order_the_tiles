@@ -9,11 +9,11 @@ const DRAG_THRESHOLD = 6;   // px of movement before a press becomes a drag
 const EDGE = 70;            // px from the window edge where auto-scroll starts
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-export function createBoard({ tiles, dragStyle, easy, configureBoard, onChange, onSolved }) {
+export function createBoard({ tiles, dragStyle, easy, configureBoard, footer, onChange, onSolved }) {
   const board = el('div', { class: `board drag-${dragStyle}`, role: 'list' });
   const live = el('div', { class: 'sr-only', 'aria-live': 'polite' });
-  const wrapper = el('div', { class: 'board-wrap' }, board, live);
-  configureBoard(board);
+  const wrapper = el('div', { class: 'board-wrap' }, board, footer, live);
+  configureBoard(board, wrapper);
 
   const solution = tiles.map(t => t.key);
   const keyOf = new Map(tiles.map(t => [t.el, t.key]));

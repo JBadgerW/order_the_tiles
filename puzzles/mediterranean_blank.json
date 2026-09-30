@@ -1,0 +1,12 @@
+{
+  "title": "World Map",
+  "type": "image",
+  "description": "Put the land and sea back where they belong.",
+  "src": "images/Mediterranean_Sea_location_map.svg.webp",
+  "rows": 3,
+  "cols": 6,
+  "credit": {
+    "text": "Mediterranean Sea location map – NordNordWest/Wikipedia, CC BY-SA 3.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Mediterranean_Sea_location_map.svg"
+  }
+}
