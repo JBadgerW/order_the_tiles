@@ -1,0 +1,8 @@
+{
+  "title": "World Map",
+  "type": "image",
+  "description": "Put the continents and oceans back where they belong.",
+  "src": "images/world_map.png",
+  "rows": 3,
+  "cols": 6
+}

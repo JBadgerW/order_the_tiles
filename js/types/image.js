@@ -1,0 +1,54 @@
+// Image puzzles: `src` is cut into a rows × cols grid of square tiles.
+// If the image's shape doesn't match the grid, it is cropped from the center.
+import { el, PUZZLE_DIR } from '../util.js';
+
+export const defaultDrag = 'swap';
+
+export const instructions = 'Drag a tile onto another to swap them and rebuild the picture.';
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Could not load image ${src}`));
+    img.src = src;
+  });
+}
+
+export async function prepare(puzzle) {
+  const { rows, cols } = puzzle;
+  const src = PUZZLE_DIR + puzzle.src;
+  const img = await loadImage(src);
+  const W = img.naturalWidth;
+  const H = img.naturalHeight;
+
+  // Largest square tile that fits the grid, and the centered crop around it.
+  const side = Math.min(W / cols, H / rows);
+  const cropX = (W - cols * side) / 2;
+  const cropY = (H - rows * side) / 2;
+
+  // background-position percentages: p% lines up p% of the image with p% of
+  // the tile, so offset = p × (tile − image). Solve for p.
+  const pct = (offset, full) => (full === side ? 0 : (offset / (full - side)) * 100);
+
+  const tiles = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const tile = el('div', { class: 'tile image-tile', 'aria-label': `Row ${r + 1}, column ${c + 1} piece` });
+      tile.style.backgroundImage = `url("${src}")`;
+      tile.style.backgroundSize = `${(W / side) * 100}% ${(H / side) * 100}%`;
+      tile.style.backgroundPosition =
+        `${pct(cropX + c * side, W)}% ${pct(cropY + r * side, H)}%`;
+      tiles.push({ key: `${r},${c}`, el: tile });
+    }
+  }
+
+  return {
+    tiles,
+    configureBoard(board) {
+      board.classList.add('image-board');
+      board.style.setProperty('--cols', cols);
+      board.style.setProperty('--rows', rows);
+    },
+  };
+}

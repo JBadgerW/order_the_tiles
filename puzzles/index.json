@@ -1,0 +1,17 @@
+[
+  {
+    "id": "trojan-war",
+    "title": "The Trojan War",
+    "type": "text",
+    "count": 18,
+    "description": "From the wedding of Peleus and Thetis to the homecomings."
+  },
+  {
+    "id": "world-map",
+    "title": "World Map",
+    "type": "image",
+    "count": 18,
+    "description": "Put the continents and oceans back where they belong.",
+    "thumb": "images/world_map.png"
+  }
+]
