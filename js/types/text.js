@@ -1,10 +1,10 @@
 // Text puzzles: each item in `items` is one card; the array order is the answer.
 import { el, richText } from '../util.js';
 
-export const defaultDrag = 'insert';
+export const defaultDrag = 'swap';
 
 export const instructions =
-  'Drag the cards into the right order — left to right, then top to bottom.';
+  'Drag a card onto another to swap them. Put them in order left to right, then top to bottom.';
 
 // Pick a card width from how long the items are, so long sentences get
 // wide cards (fewer columns) and short ones pack into many columns.

@@ -28,10 +28,10 @@ You can link students straight to a puzzle: `…/#/play/trojan-war`.
 
 ## How it plays
 
-| | Text puzzles | Image puzzles |
-|---|---|---|
-| Dragging | The card slides in and the others shift over | The tile swaps with the one it's dropped on |
-| Layout | Numbered cards; the column count adapts to text length and screen width | The grid keeps the picture's shape and fits the screen |
+Dragging a tile onto another swaps the two; no other tiles move.
+
+- **Text puzzles:** numbered cards. The column count adapts to text length and screen width.
+- **Image puzzles:** the grid keeps the picture's shape and fits the screen.
 
 - **Easy / Hard:** chosen on the menu (the browser remembers the choice). In Easy mode, tiles in the right
   spot get a green edge. Hard mode gives no hints.
@@ -102,7 +102,7 @@ Tiles are square. If the picture's shape doesn't match `cols : rows`, it is crop
 |---|---|---|
 | `description` | all | A line under the title on the menu card |
 | `order` | all | A number that sets the menu position (lower comes first); otherwise puzzles are listed alphabetically |
-| `drag` | all | `"insert"` or `"swap"`, overriding the default for that puzzle type |
+| `drag` | all | `"insert"` makes a dropped tile slide into place while the others shift over (the default is `"swap"`) |
 | `columns` | text | A fixed number of columns in place of the automatic layout |
 | `thumb` | image | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
 
