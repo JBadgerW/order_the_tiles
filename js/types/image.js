@@ -1,19 +1,12 @@
 // Image puzzles: `src` is cut into a rows × cols grid of square tiles.
 // If the image's shape doesn't match the grid, it is cropped from the center.
-import { el, PUZZLE_DIR } from '../util.js';
+import { el, loadImage, PUZZLE_DIR } from '../util.js';
 
 export const defaultDrag = 'swap';
 
-export const instructions = 'Drag a tile onto another to swap them and rebuild the picture.';
+export const terms = { pieces: 'picture tiles', short: 'tiles', rate: 'tiles per minute', moves: 'Moves' };
 
-function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Could not load image ${src}`));
-    img.src = src;
-  });
-}
+export const instructions = 'Drag a tile onto another to swap them and rebuild the picture.';
 
 export async function prepare(puzzle) {
   const { rows, cols } = puzzle;

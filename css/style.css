@@ -124,7 +124,7 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
   display: grid; place-items: center; overflow: hidden;
 }
 .card-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.art-text, .art-image {
+.art-count-box {
   display: flex; flex-direction: column; align-items: center; line-height: 1;
   color: var(--accent);
 }
@@ -236,6 +236,95 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 .image-tile.ghost { border-radius: 6px; }
 .image-board.solved { gap: 0; }
 .image-board.solved .image-tile { border-radius: 0; box-shadow: none; }
+
+/* Place puzzles: a blank map with a tray of names underneath */
+.place-frame {
+  width: min(100%, calc((100dvh - 250px) * var(--ratio)));
+  min-width: min(100%, 320px);
+  margin: 0 auto;
+}
+.place-wrap { user-select: none; -webkit-user-select: none; }
+.place-map { position: relative; }
+.draw-panel code { user-select: all; -webkit-user-select: all; }
+.place-img {
+  display: block; width: 100%; height: auto;
+  border-radius: 8px; box-shadow: var(--shadow);
+  user-select: none; -webkit-user-select: none; -webkit-user-drag: none;
+}
+.place-tray { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+/* On wide screens the tray sits beside the map, so the map can use the full height. */
+@media (min-aspect-ratio: 4/3) and (min-width: 900px) {
+  .place-wrap {
+    display: grid; gap: 24px; justify-content: center; align-items: start;
+    grid-template-columns: minmax(0, calc((100dvh - 175px) * var(--ratio))) minmax(200px, 300px);
+  }
+  .place-wrap .place-frame { width: 100%; }
+  .place-tray { margin-top: 0; justify-content: flex-start; align-content: flex-start; }
+  .draw-panel { margin: 0; }
+}
+.place-tile {
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 8px 16px 8px 12px;
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: var(--shadow); color: var(--ink);
+}
+.place-tile:hover { border-color: var(--ink-soft); }
+.place-tile.lifted { cursor: default; background: transparent; box-shadow: none; border-style: dashed; }
+.place-tile.lifted .pin { visibility: hidden; }
+.place-tile.missed { animation: nope .4s ease; }
+@keyframes nope { 20%, 60% { translate: -5px 0; } 40%, 80% { translate: 5px 0; } }
+
+.pin {
+  --mark: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 600 .85rem/1.2 var(--font); white-space: nowrap;
+}
+.mark { flex: none; width: var(--mark); height: var(--mark); }
+.mark svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: var(--surface); stroke-width: 1.5; }
+
+/* On the map (and on the way there) a pin has no background: dark ink with a
+   light halo, like a printed map label. The map stays light in dark mode. */
+.pin-ghost, .place-map .pin { color: #1b1f27; }
+.pin-ghost .mark svg, .place-map .mark svg { stroke: #fff; }
+.pin-ghost .pin-label, .place-map .pin-label {
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 5px #fff;
+}
+.pin-ghost {
+  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none;
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .25));
+}
+/* A placed pin's mark is centered on its spot, the label beside it. */
+.place-map .pin {
+  position: absolute; pointer-events: none;
+  transform: translate(calc(var(--mark) / -2), -50%);
+}
+.place-map .pin.label-left { flex-direction: row-reverse; transform: translate(calc(var(--mark) / 2 - 100%), -50%); }
+.place-map .placed .mark { animation: settle .45s cubic-bezier(.2, .8, .3, 1.4); }
+@keyframes settle { from { scale: 1.8; } }
+
+/* Region names, styled like a printed map: seas in blue italics, lands in
+   spaced capitals. They have no marker; the name itself is centered. */
+.pin.region .pin-label { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.pin.region.sea .pin-label { font-size: .85rem; font-style: italic; letter-spacing: .03em; text-transform: none; }
+.place-map .pin.region.land { color: #5b4325; }
+.place-map .pin.region.sea, .pin-ghost.region.sea { color: #1f5d8c; }
+.place-map .pin.region { transform: translate(-50%, -50%); }
+
+/* Region outlines: flashed when a region is placed, always shown when drawing */
+.place-areas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.place-areas polygon {
+  fill: rgba(184, 138, 59, .2); stroke: #a8742a; stroke-width: 2; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.place-areas .flash { animation: area-flash 1.6s ease forwards; }
+@keyframes area-flash { 0% { opacity: 0; } 15%, 65% { opacity: 1; } 100% { opacity: 0; } }
+.place-areas .draft { fill: rgba(47, 111, 115, .2); stroke: #2f6f73; stroke-dasharray: 6 4; }
+
+.place-map.drawing { cursor: crosshair; }
+.draw-panel { margin: 16px auto 0; max-width: 900px; }
+.draw-panel p { margin: 0 0 8px; overflow-wrap: anywhere; }
+.draw-panel code { font: .8rem/1.5 ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; }
+.draw-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* Small-print source credit under the puzzle */
 .credit {

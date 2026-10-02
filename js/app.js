@@ -1,12 +1,15 @@
 // Screens and routing. URLs:
 //   #/            the menu
 //   #/play/<id>   a puzzle (puzzles/<id>.json)
+//   #/draw/<id>   a place puzzle's drawing page, for teachers (not linked from the menu)
 import { createBoard } from './board.js';
+import { drawBoard } from './draw.js';
 import * as textType from './types/text.js';
 import * as imageType from './types/image.js';
+import * as placeType from './types/place.js';
 import { el, fetchJSON, formatTime, store, PUZZLE_DIR } from './util.js';
 
-const TYPES = { text: textType, image: imageType };
+const TYPES = { text: textType, image: imageType, place: placeType };
 const MODE_KEY = 'order-the-tiles:mode';
 const app = document.getElementById('app');
 
@@ -46,8 +49,8 @@ function modeToggle() {
     const mode = getMode();
     buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
     hint.textContent = mode === 'easy'
-      ? 'Tiles in the right spot get a green edge.'
-      : 'No hints: you won’t know a tile is right until the whole puzzle is.';
+      ? 'Tiles in the right spot get a green edge. Map names snap into place from farther away.'
+      : 'No hints: you won’t know a tile is right until the whole puzzle is. Map names must land closer.';
   }
   update();
 
@@ -58,19 +61,19 @@ function modeToggle() {
 }
 
 function puzzleCard(p) {
-  const art = p.type === 'image' && p.thumb
+  const terms = TYPES[p.type]?.terms ?? textType.terms;
+  const art = p.thumb
     ? el('img', { src: PUZZLE_DIR + p.thumb, alt: '', loading: 'lazy' })
-    : el('div', { class: `art-${p.type}` },
+    : el('div', { class: 'art-count-box' },
         el('span', { class: 'art-count' }, String(p.count)),
-        el('span', { class: 'art-label' }, p.type === 'image' ? 'tiles' : 'cards'));
+        el('span', { class: 'art-label' }, terms.short));
 
   return el('a', { class: 'card', href: `#/play/${encodeURIComponent(p.id)}` },
     el('div', { class: 'card-art' }, art),
     el('div', { class: 'card-text' },
       el('h2', {}, p.title),
       p.description && el('p', {}, p.description),
-      el('span', { class: 'card-meta' },
-        `${p.count} ${p.type === 'image' ? 'picture tiles' : 'story cards'}`),
+      el('span', { class: 'card-meta' }, `${p.count} ${terms.pieces}`),
     ),
   );
 }
@@ -101,13 +104,14 @@ async function showPuzzle(id) {
   document.title = `${puzzle.title} · Order the Tiles`;
 
   const mode = getMode();
-  const { tiles, configureBoard } = await type.prepare(puzzle);
+  // A type can bring its own board; otherwise tiles go on the ordering board.
+  const { tiles, configureBoard, createBoard: typeBoard } = await type.prepare(puzzle);
   let moves = 0;
   let started = 0;
   const moveCount = el('b', {}, '0');
   const note = el('p', { class: 'instructions' }, type.instructions);
 
-  const board = createBoard({
+  const board = (typeBoard ?? createBoard)({
     tiles,
     configureBoard,
     footer: creditLine(puzzle.credit),
@@ -122,9 +126,9 @@ async function showPuzzle(id) {
         rate: perMinute >= 10 ? Math.round(perMinute) : perMinute.toFixed(1),
         moves,
       };
-      note.textContent = `Solved in ${summary.time} · ${summary.rate} tiles per minute · ${moves} moves`;
+      note.textContent = `Solved in ${summary.time} · ${summary.rate} ${type.terms.rate} · ${moves} ${type.terms.moves.toLowerCase()}`;
       note.classList.add('done');
-      setTimeout(() => celebrate(summary, mode), 350);
+      setTimeout(() => celebrate(summary, mode, type.terms), 350);
     },
   });
 
@@ -134,13 +138,31 @@ async function showPuzzle(id) {
       el('h1', {}, puzzle.title),
       el('div', { class: 'stats' },
         el('span', { class: `badge badge-${mode}` }, mode === 'easy' ? 'Easy' : 'Hard'),
-        el('span', { class: 'moves' }, 'Moves ', moveCount),
+        el('span', { class: 'moves' }, `${type.terms.moves} `, moveCount),
       ),
     ),
     note,
     board.element,
   ));
   started = performance.now();
+}
+
+// ---------- Drawing page (place puzzles) ----------
+
+async function showDraw(id) {
+  const puzzle = await fetchJSON(`${PUZZLE_DIR}${encodeURIComponent(id)}.json`);
+  if (puzzle.type !== 'place') throw new Error(`${id} is not a place puzzle, so there is nothing to draw`);
+  document.title = `Drawing: ${puzzle.title} · Order the Tiles`;
+  show(el('main', { class: 'screen play play-place' },
+    el('header', { class: 'play-bar' },
+      el('a', { class: 'btn quiet', href: '#/' }, '← Menu'),
+      el('h1', {}, `Drawing: ${puzzle.title}`),
+      el('a', { class: 'btn quiet', href: `#/play/${encodeURIComponent(id)}` }, 'Play'),
+    ),
+    el('p', { class: 'instructions' },
+      'Every answer is shown. Click once for a point’s coordinates, or click around a region to outline it.'),
+    await drawBoard(puzzle),
+  ));
 }
 
 // Attribution for borrowed material, shown in small print under the puzzle:
@@ -153,7 +175,7 @@ function creditLine(credit) {
   return el('p', { class: 'credit' }, `${credit.prefix ?? 'Source:'} `, label);
 }
 
-function celebrate({ time, rate, moves }, mode) {
+function celebrate({ time, rate, moves }, mode, terms) {
   const close = () => {
     overlay.classList.add('leaving');
     setTimeout(() => overlay.remove(), 250);
@@ -169,8 +191,8 @@ function celebrate({ time, rate, moves }, mode) {
       el('h2', { id: 'win-title' }, 'You did it!'),
       el('div', { class: 'win-stats' },
         stat(time, 'time'),
-        stat(rate, 'tiles per minute'),
-        stat(moves, 'moves'),
+        stat(rate, terms.rate),
+        stat(moves, terms.moves.toLowerCase()),
       ),
       el('p', { class: 'win-mode' }, mode === 'easy' ? 'Easy mode' : 'Hard mode'),
       el('div', { class: 'win-actions' },
@@ -187,10 +209,11 @@ function celebrate({ time, rate, moves }, mode) {
 // ---------- Routing ----------
 
 async function route() {
-  const match = location.hash.match(/^#\/play\/(.+)$/);
+  const [, screen, id] = location.hash.match(/^#\/(play|draw)\/(.+)$/) ?? [];
   app.setAttribute('aria-busy', 'true');
   try {
-    if (match) await showPuzzle(decodeURIComponent(match[1]));
+    if (screen === 'play') await showPuzzle(decodeURIComponent(id));
+    else if (screen === 'draw') await showDraw(decodeURIComponent(id));
     else await showMenu();
   } catch (err) {
     showError(err);

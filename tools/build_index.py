@@ -24,8 +24,10 @@ def entry_for(path):
         count = len(data["items"])
     elif kind == "image":
         count = data["rows"] * data["cols"]
+    elif kind == "place":
+        count = len(data["features"])
     else:
-        raise ValueError(f'{path.name}: "type" must be "text" or "image"')
+        raise ValueError(f'{path.name}: "type" must be "text", "image" or "place"')
 
     entry = {
         "id": path.stem,
@@ -35,7 +37,7 @@ def entry_for(path):
     }
     if data.get("description"):
         entry["description"] = data["description"]
-    if kind == "image":
+    if kind in ("image", "place"):
         entry["thumb"] = data.get("thumb", data["src"])
     if "order" in data:
         entry["order"] = data["order"]

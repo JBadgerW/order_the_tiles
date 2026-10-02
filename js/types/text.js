@@ -3,6 +3,8 @@ import { el, richText } from '../util.js';
 
 export const defaultDrag = 'swap';
 
+export const terms = { pieces: 'story cards', short: 'cards', rate: 'tiles per minute', moves: 'Moves' };
+
 export const instructions =
   'Drag a card onto another to swap them. Put them in order left to right, then top to bottom.';
 

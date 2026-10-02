@@ -2,7 +2,7 @@
 
 A drag-and-drop ordering quiz. Students pick a puzzle from the menu, then put
 shuffled tiles back in the right order: story cards (text) or pieces of a
-picture (image). When the order is right they see **"You did it!"** with their
+picture (image). Place puzzles work differently: students drag names onto a blank map. When the order is right they see **"You did it!"** with their
 time, tiles per minute, and number of moves.
 
 It's a static site: plain HTML, CSS and JavaScript, with no build step and no server code.
@@ -33,8 +33,12 @@ Dragging a tile onto another swaps the two; no other tiles move.
 - **Text puzzles:** numbered cards. The column count adapts to text length and screen width.
 - **Image puzzles:** the grid keeps the picture's shape and fits the screen.
 
+- **Place puzzles:** drag a name from the tray onto the map. A name with a dot (a city) must land near its
+  spot; a name without one (a sea, island, or region) can land anywhere inside the region. A correct drop
+  settles and leaves the tray; a wrong one flies back. Every drop on the map is a try. On wide screens the
+  tray sits beside the map; on narrow ones, underneath.
 - **Easy / Hard:** chosen on the menu (the browser remembers the choice). In Easy mode, tiles in the right
-  spot get a green edge. Hard mode gives no hints.
+  spot get a green edge, and map names snap into place from 1.5× farther away. Hard mode gives no hints.
 - **Shuffling:** no tile ever starts in its correct spot.
 - **Moves:** each drag that changes the order counts as one move.
 - **Tiles per minute:** the number of tiles ÷ minutes taken.
@@ -96,6 +100,47 @@ Put the picture in `puzzles/images/`, then create `puzzles/<id>.json`:
 Tiles are square. If the picture's shape doesn't match `cols : rows`, it is cropped from the center.
 (`world_map.png` is 1200×600, which is 2:1, so 3×6 or 4×8 fit it exactly.)
 
+### Place puzzle
+
+Put a blank map in `puzzles/images/`, then list the places in `features`. A place is either a
+**point** (a city or a mountain) or a **region** (a sea, an island, a land):
+
+```json
+{
+  "title": "Homer’s Greece: Places",
+  "type": "place",
+  "src": "images/Aegean_sea_and_Western_Anatolia.webp",
+  "bounds": { "west": 19.0913, "east": 28.787, "north": 41.6116, "south": 34.7973 },
+  "features": [
+    { "name": "Athens", "lat": 37.9715, "lon": 23.7257 },
+    { "name": "Mt. Olympus", "lat": 40.0856, "lon": 22.3586, "mark": "triangle" },
+    { "name": "Crete", "at": [35.2, 24.82], "area": [[35.64, 23.52], [35.67, 23.88], "…"] },
+    { "name": "Aegean Sea", "style": "sea", "area": ["…"] }
+  ]
+}
+```
+
+**Coordinates.** With `bounds` (the longitude of the map's left and right edges and the latitude of
+its top and bottom), places use latitude and longitude, which you can copy from Wikipedia. This
+works for "location maps" like Wikimedia's, where the latitude and longitude lines are straight and
+evenly spaced. Without `bounds`, use the image's own pixels: `"x"`/`"y"` for points and `[x, y]`
+pairs for outlines.
+
+**Points** use `lat`/`lon` (or `x`/`y`) and show a dot; `"mark": "triangle"` is for mountains. A drop
+counts within `snap` of the spot: a fraction of the map's width, `0.04` unless the puzzle sets its own
+`"snap"`. Make it smaller when places are close together. `"label": "left"` puts the name on the
+left of the dot when the right side is crowded.
+
+**Regions** have an `area` outline, a list of `[lat, lon]` pairs. A drop counts anywhere inside it, or
+within `snap` of its edge (`0.01` unless the region sets its own). `"at"` is where the name sits once
+placed (otherwise the middle of the outline). `"style": "sea"` labels it in blue italics; land regions
+get spaced capitals. When a region is placed, its outline flashes so students see its extent.
+
+**The drawing page.** Open `#/draw/<id>` (for example `…/#/draw/greece-places`) to see every answer
+and outline on the map. Click once to get a point's coordinates, or click around a region and press
+**Copy outline** to get an `"area"` to paste into the file. Outlines can be rough: 6 to 15 points.
+The page isn't linked from the menu, but anyone with the address can open it.
+
 ### Optional fields
 
 | Field | Applies to | Effect |
@@ -105,7 +150,7 @@ Tiles are square. If the picture's shape doesn't match `cols : rows`, it is crop
 | `drag` | all | `"insert"` makes a dropped tile slide into place while the others shift over (the default is `"swap"`) |
 | `columns` | text | A fixed number of columns in place of the automatic layout |
 | `credit` | all | Small print under the puzzle, e.g. `{"text": "World Map with Countries – GISGeography", "url": "https://gisgeography.com/world-map/"}` shows **Source: <link>**. Add `"prefix"` to change the word "Source:" |
-| `thumb` | image | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
+| `thumb` | image, place | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
 
 ## Files
 
@@ -116,6 +161,8 @@ js/app.js             menu, puzzle screen, "You did it!" message, routing
 js/board.js           shuffling, dragging, keyboard moves, win check
 js/types/text.js      text cards
 js/types/image.js     cuts an image into tiles
+js/types/place.js     place puzzles: names dragged onto a blank map
+js/draw.js            the drawing page for place puzzles (#/draw/<id>)
 js/util.js            shared helpers
 puzzles/              puzzle JSON files, index.json, images/
 sources/              original source files (e.g. Typst card tables)

@@ -8,6 +8,15 @@ export async function fetchJSON(path) {
   return res.json();
 }
 
+export function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Could not load image ${src}`));
+    img.src = src;
+  });
+}
+
 // Fisher–Yates shuffle, repeated until no item sits in its solved position
 // (a "derangement"), so a puzzle never starts partly or fully solved.
 // `keys[i]` is what belongs at position i; equal keys are interchangeable.
