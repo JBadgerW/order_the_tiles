@@ -4,7 +4,8 @@
 // Coordinates are [lat, lon] when the puzzle has `bounds`, otherwise image
 // pixels [x, y]. Points use `lat`/`lon` (or `x`/`y`) and count within `snap`
 // of the spot; regions use an `area` outline and count inside it or within
-// `snap` of its edge. Distances are fractions of the map's width.
+// `snap` of its edge; rivers use a `line` (or several, for branches) and count
+// within `snap` of it. Distances are fractions of the map's width.
 import { el, loadImage, shuffledOrder, PUZZLE_DIR } from '../util.js';
 
 export const terms = { pieces: 'places', short: 'places', rate: 'places per minute', moves: 'Tries' };
@@ -14,6 +15,7 @@ export const instructions =
 
 const POINT_SNAP = 0.04;    // default for points (the puzzle's "snap" changes it)
 const REGION_SNAP = 0.01;   // default margin around a region's outline
+const LINE_SNAP = 0.012;    // default distance from a river's course
 const EASY_SNAP = 1.5;      // Easy mode accepts drops this much farther out
 const DRAG_THRESHOLD = 4;   // px of movement before a press becomes a drag
 const EDGE = 70;            // px from the window edge where auto-scroll starts
@@ -26,7 +28,7 @@ const MARKS = {
 
 // The name (with its marker, for points): what's dragged and left on the map.
 function pin(f, side = f.side) {
-  return el('span', { class: `pin ${f.area ? `region ${f.style}` : 'point'} label-${side}` },
+  return el('span', { class: `pin ${f.area || f.lines ? `region ${f.style}` : 'point'} label-${side}` },
     f.mark && el('span', { class: 'mark', 'aria-hidden': 'true', html: MARKS[f.mark] }),
     el('span', { class: 'pin-label' }, f.name));
 }
@@ -54,7 +56,10 @@ export function areaLayer(W, H) {
 export const outlinePoints = (pts, W, H) => pts.map(p => `${p.x * W},${p.y * H}`).join(' ');
 
 export function areaShape(f, W, H) {
-  return svg('polygon', { points: outlinePoints(f.area, W, H) });
+  if (!f.lines) return svg('polygon', { points: outlinePoints(f.area, W, H) });
+  const group = svg('g');
+  group.append(...f.lines.map(line => svg('polyline', { points: outlinePoints(line, W, H) })));
+  return group;
 }
 
 // Converts the puzzle's coordinate pairs to fractions of the image's width and
@@ -89,9 +94,17 @@ function feature(f, puzzle, proj) {
       : { x: area.reduce((s, p) => s + p.x, 0) / area.length, y: area.reduce((s, p) => s + p.y, 0) / area.length };
     return { ...common, area, style: f.style === 'sea' ? 'sea' : 'land', side: 'center', snap: f.snap ?? REGION_SNAP, ...spot };
   }
+  if (f.line) {
+    // One course, or a list of them for a river with branches (like a delta).
+    const courses = Array.isArray(f.line[0]?.[0]) ? f.line : [f.line];
+    if (courses.some(c => c.length < 2)) throw new Error(`"${f.name}": a "line" needs at least 2 points`);
+    const lines = courses.map(c => c.map(proj.toMap));
+    const spot = f.at ? proj.toMap(f.at) : lines[0][Math.floor(lines[0].length / 2)];
+    return { ...common, lines, style: 'river', side: 'center', snap: f.snap ?? LINE_SNAP, ...spot };
+  }
   const pair = proj.geo ? [f.lat, f.lon] : [f.x, f.y];
   if (pair.some(v => v == null)) {
-    throw new Error(`"${f.name}" needs ${proj.geo ? '"lat" and "lon"' : '"x" and "y"'}, or an "area"`);
+    throw new Error(`"${f.name}" needs ${proj.geo ? '"lat" and "lon"' : '"x" and "y"'}, an "area" or a "line"`);
   }
   return {
     ...common,
@@ -133,6 +146,9 @@ function hits(f, p, aspect, scale) {
   const flat = q => ({ x: q.x, y: q.y * aspect });
   const at = flat(p);
   const reach = f.snap * scale;
+  if (f.lines) {
+    return f.lines.some(line => line.map(flat).some((a, i, pts) => i > 0 && segmentDistance(at, pts[i - 1], a) <= reach));
+  }
   if (!f.area) return Math.hypot(at.x - f.x, at.y - f.y * aspect) <= reach;
   const pts = f.area.map(flat);
   return inside(at, pts) || pts.some((a, i) => segmentDistance(at, a, pts[(i + 1) % pts.length]) <= reach);
@@ -142,7 +158,7 @@ export async function prepare(puzzle) {
   const { src, W, H, features } = await loadPlaces(puzzle);
   const tiles = features.map(f => ({
     ...f,
-    el: el('div', { class: 'tile place-tile', role: 'button', tabindex: '0' }, pin(f, f.area ? 'center' : 'right')),
+    el: el('div', { class: 'tile place-tile', role: 'button', tabindex: '0' }, pin(f, f.area || f.lines ? 'center' : 'right')),
   }));
   return {
     tiles,
@@ -234,8 +250,8 @@ function createPlaceBoard({ tiles, src, W, H, easy, footer, onChange, onSolved }
     g.ghost.remove();
 
     map.append(placedPin(t));
-    if (t.area) {
-      // Show the whole region for a moment, so the student sees its extent.
+    if (t.area || t.lines) {
+      // Show the whole region (or river) for a moment, so the student sees its extent.
       const shape = areaShape(t, W, H);
       shape.classList.add('flash');
       shape.addEventListener('animationend', () => shape.remove());

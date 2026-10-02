@@ -303,24 +303,28 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 .place-map .pin.label-above { flex-direction: column-reverse; gap: 1px; transform: translate(-50%, calc(var(--mark) / 2 - 100%)); }
 /* Placed names shrink a little on small maps, where places crowd together. */
 .place-map { container-type: inline-size; }
-.place-map .pin { font-size: clamp(11px, 2.4cqw, .85rem); }
+.place-map .pin { --mark: clamp(10px, 2.1cqw, 14px); font-size: clamp(11px, 2.4cqw, .85rem); }
 .place-map .pin.region .pin-label { font-size: clamp(9.5px, 2cqw, .72rem); }
-.place-map .pin.region.sea .pin-label { font-size: clamp(11px, 2.4cqw, .85rem); }
+.place-map .pin.region:is(.sea, .river) .pin-label { font-size: clamp(11px, 2.4cqw, .85rem); }
 .place-map .placed .mark { animation: settle .45s cubic-bezier(.2, .8, .3, 1.4); }
 @keyframes settle { from { scale: 1.8; } }
 
 /* Region names, styled like a printed map: seas in blue italics, lands in
    spaced capitals. They have no marker; the name itself is centered. */
 .pin.region .pin-label { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-.pin.region.sea .pin-label { font-size: .85rem; font-style: italic; letter-spacing: .03em; text-transform: none; }
+.pin.region:is(.sea, .river) .pin-label { font-size: .85rem; font-style: italic; letter-spacing: .03em; text-transform: none; }
 .place-map .pin.region.land { color: #5b4325; }
-.place-map .pin.region.sea, .pin-ghost.region.sea { color: #1f5d8c; }
+.place-map .pin.region:is(.sea, .river), .pin-ghost.region:is(.sea, .river) { color: #1f5d8c; }
 .place-map .pin.region { transform: translate(-50%, -50%); }
 
 /* Region outlines: flashed when a region is placed, always shown when drawing */
 .place-areas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .place-areas polygon {
   fill: rgba(184, 138, 59, .2); stroke: #a8742a; stroke-width: 2; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.place-areas polyline {
+  fill: none; stroke: #2a7fc4; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 .place-areas .flash { animation: area-flash 1.6s ease forwards; }

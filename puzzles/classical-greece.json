@@ -1,0 +1,30 @@
+{
+  "title": "Classical Greece",
+  "type": "place",
+  "hidden": true,
+  "description": "The Persian Wars and the great cities of the fifth century BC.",
+  "src": "images/Aegean_sea_and_Western_Anatolia.webp",
+  "credit": {
+    "text": "Aegean Sea and Western Anatolia topographic basemap – Ikonact/Wikimedia Commons, CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Aegean_sea_and_Western_Anatolia_regions_large_topographic_basemap.svg"
+  },
+  "bounds": { "west": 19.0913, "east": 28.787, "north": 41.6116, "south": 34.7973 },
+  "snap": 0.03,
+  "features": [
+    { "name": "Athens", "lat": 37.9715, "lon": 23.7257, "snap": 0.013 },
+    { "name": "Sparta", "lat": 37.0818, "lon": 22.4237 },
+    { "name": "Corinth", "lat": 37.9056, "lon": 22.8781, "label": "left", "snap": 0.02 },
+    { "name": "Thebes", "lat": 38.32, "lon": 23.319, "label": "left" },
+    { "name": "Delphi", "lat": 38.4824, "lon": 22.501, "label": "left" },
+    { "name": "Olympia", "lat": 37.6379, "lon": 21.63, "label": "left" },
+    { "name": "Marathon", "lat": 38.118, "lon": 23.978, "snap": 0.015 },
+    { "name": "Thermopylae", "lat": 38.796, "lon": 22.536 },
+    { "name": "Salamis", "lat": 37.93, "lon": 23.47, "snap": 0.013, "label": "below" },
+    { "name": "Miletus", "lat": 37.53, "lon": 27.278 },
+    { "name": "Sardis", "lat": 38.488, "lon": 28.04, "label": "left" },
+    { "name": "Ionia", "at": [38.03, 27.15], "area": [[38.77, 25.8], [38.77, 26.78], [38.65, 27.29], [38.2, 27.55], [37.63, 27.58], [37.37, 27.36], [37.52, 26.57], [38.2, 25.99]] },
+    { "name": "Aegean Sea", "style": "sea", "at": [39.05, 24.96], "area": [[39.79, 22.87], [39.25, 23.34], [38.98, 23.77], [38.54, 24.33], [38.02, 24.66], [37.63, 24.1], [37.6, 23.74], [37.29, 23.45], [36.46, 23.2], [35.64, 23.55], [35.36, 26.3], [35.6, 27.15], [36.2, 28.0], [37.01, 27.4], [37.71, 27.0], [38.31, 26.3], [39.31, 26.71], [39.48, 26.06], [40.02, 26.19], [40.39, 25.99], [40.79, 25.5], [40.82, 24.5], [40.7, 24.1], [40.1, 24.43], [39.95, 23.95], [39.95, 23.7]] },
+    { "name": "Euboea", "at": [38.62, 23.85], "area": [[38.97, 22.85], [39.05, 23.3], [38.75, 23.68], [38.55, 24.15], [38.2, 24.4], [37.97, 24.6], [38.05, 24.35], [38.3, 23.95], [38.45, 23.62], [38.75, 23.3]] },
+    { "name": "Lesbos", "at": [39.17, 26.25], "area": [[39.38, 26.05], [39.38, 26.42], [39.25, 26.6], [39.0, 26.6], [38.97, 26.2], [39.1, 25.85], [39.25, 25.83]] }
+  ]
+}

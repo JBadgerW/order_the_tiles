@@ -8,6 +8,9 @@ list a folder. Run this after adding, removing, or renaming a puzzle:
 
 Menu order: puzzles with an "order" number come first (lowest first),
 then the rest alphabetically by title.
+
+Puzzles with "hidden": true are left off the menu but still play from a
+direct link (#/play/<id>). Remove the line and rerun this to list them.
 """
 import json
 import sys
@@ -46,11 +49,16 @@ def entry_for(path):
 
 def build():
     entries = []
+    hidden = []
     errors = []
     for path in sorted(PUZZLES.glob("*.json")):
         if path.name == "index.json":
             continue
         try:
+            if json.loads(path.read_text(encoding="utf-8")).get("hidden"):
+                entry_for(path)  # still check it
+                hidden.append(path.stem)
+                continue
             entries.append(entry_for(path))
         except (KeyError, ValueError, json.JSONDecodeError) as exc:
             errors.append(f"  {path.name}: {exc}")
@@ -60,6 +68,8 @@ def build():
         json.dumps(entries, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     print(f"Wrote puzzles/index.json with {len(entries)} puzzle(s).")
+    if hidden:
+        print(f"Hidden from the menu: {', '.join(hidden)}")
     if errors:
         print("Skipped files with problems:\n" + "\n".join(errors), file=sys.stderr)
         return 1

@@ -1,14 +1,14 @@
 // The drawing page for place puzzles (#/draw/<id>), for teachers. It shows
 // every answer on the map, and turns clicks into coordinates to paste into the
 // puzzle file: one click for a point, several clicks around a region for an
-// "area" outline.
+// "area" outline, or along a river for a "line".
 import { el } from './util.js';
 import { loadPlaces, placedPin, areaLayer, areaShape, outlinePoints } from './types/place.js';
 
 export async function drawBoard(puzzle) {
   const { src, W, H, proj, features } = await loadPlaces(puzzle);
   const areas = areaLayer(W, H);
-  areas.append(...features.filter(f => f.area).map(f => areaShape(f, W, H)));
+  areas.append(...features.filter(f => f.area || f.lines).map(f => areaShape(f, W, H)));
   const draft = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
   draft.classList.add('draft');
   areas.append(draft);
@@ -25,7 +25,8 @@ export async function drawBoard(puzzle) {
   const points = [];
   const lastOut = el('code', {}, '—');
   const areaOut = el('code', {}, '—');
-  const copyBtn = el('button', { type: 'button', class: 'btn' }, 'Copy outline');
+  const copyBtn = el('button', { type: 'button', class: 'btn' }, 'Copy as area');
+  const copyLineBtn = el('button', { type: 'button', class: 'btn' }, 'Copy as line');
 
   function update() {
     draft.setAttribute('points', outlinePoints(points, W, H));
@@ -39,7 +40,7 @@ export async function drawBoard(puzzle) {
       lastOut.textContent = '—';
     }
     areaOut.textContent = points.length
-      ? `"area": ${JSON.stringify(points.map(p => pair(p, 2))).replaceAll(',', ', ')}`
+      ? JSON.stringify(points.map(p => pair(p, 2))).replaceAll(',', ', ')
       : '—';
   }
 
@@ -49,24 +50,28 @@ export async function drawBoard(puzzle) {
     update();
   });
 
-  copyBtn.addEventListener('click', async () => {
+  const copier = (btn, key) => btn.addEventListener('click', async () => {
+    const label = btn.textContent;
     try {
-      await navigator.clipboard.writeText(areaOut.textContent);
-      copyBtn.textContent = 'Copied';
+      await navigator.clipboard.writeText(`"${key}": ${areaOut.textContent}`);
+      btn.textContent = 'Copied';
     } catch {
       getSelection().selectAllChildren(areaOut);
-      copyBtn.textContent = 'Press Ctrl+C';
+      btn.textContent = 'Press Ctrl+C';
     }
-    setTimeout(() => { copyBtn.textContent = 'Copy outline'; }, 1500);
+    setTimeout(() => { btn.textContent = label; }, 1500);
   });
+  copier(copyBtn, 'area');
+  copier(copyLineBtn, 'line');
 
   const panel = el('div', { class: 'draw-panel' },
     el('p', {}, el('b', {}, 'Last click: '), lastOut),
-    el('p', {}, el('b', {}, 'Outline: '), areaOut),
+    el('p', {}, el('b', {}, 'Points so far: '), areaOut),
     el('div', { class: 'draw-actions' },
       el('button', { type: 'button', class: 'btn', onclick: () => { points.pop(); update(); } }, 'Undo point'),
       el('button', { type: 'button', class: 'btn', onclick: () => { points.length = 0; update(); } }, 'Clear'),
       copyBtn,
+      copyLineBtn,
     ),
   );
 

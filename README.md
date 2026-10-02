@@ -136,9 +136,17 @@ within `snap` of its edge (`0.01` unless the region sets its own). `"at"` is whe
 placed (otherwise the middle of the outline). `"style": "sea"` labels it in blue italics; land regions
 get spaced capitals. When a region is placed, its outline flashes so students see its extent.
 
+**Rivers** have a `line`: a list of points along the river's course, from source to mouth. A drop
+counts within `snap` of the river (`0.012` unless the river sets its own), and the river traces itself
+when placed. For a river with branches, like the Nile's delta, give a list of lines:
+`"line": [[[x, y], …], [[x, y], …]]`. River names are labeled in blue italics.
+
+**Maps without latitude and longitude lines** (like `mediterranean-relief-map.jpg`) use image pixels.
+Get them from the drawing page, or from any image viewer.
+
 **The drawing page.** Open `#/draw/<id>` (for example `…/#/draw/greece-places`) to see every answer
-and outline on the map. Click once to get a point's coordinates, or click around a region and press
-**Copy outline** to get an `"area"` to paste into the file. Outlines can be rough: 6 to 15 points.
+and outline on the map. Click once to get a point's coordinates. Click around a region and press
+**Copy as area**, or along a river and press **Copy as line**, to get points to paste into the file. Outlines can be rough: 6 to 15 points.
 The page isn't linked from the menu, but anyone with the address can open it.
 
 ### Optional fields
@@ -151,6 +159,7 @@ The page isn't linked from the menu, but anyone with the address can open it.
 | `columns` | text | A fixed number of columns in place of the automatic layout |
 | `credit` | all | Small print under the puzzle, e.g. `{"text": "World Map with Countries – GISGeography", "url": "https://gisgeography.com/world-map/"}` shows **Source: <link>**. Add `"prefix"` to change the word "Source:" |
 | `thumb` | image, place | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
+| `hidden` | all | `true` leaves the puzzle off the menu; it still plays from a direct link (`#/play/<id>`). Delete the line and rerun `build_index.py` to list it |
 
 ## Files
 
