@@ -299,6 +299,13 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
   transform: translate(calc(var(--mark) / -2), -50%);
 }
 .place-map .pin.label-left { flex-direction: row-reverse; transform: translate(calc(var(--mark) / 2 - 100%), -50%); }
+.place-map .pin.label-below { flex-direction: column; gap: 1px; transform: translate(-50%, calc(var(--mark) / -2)); }
+.place-map .pin.label-above { flex-direction: column-reverse; gap: 1px; transform: translate(-50%, calc(var(--mark) / 2 - 100%)); }
+/* Placed names shrink a little on small maps, where places crowd together. */
+.place-map { container-type: inline-size; }
+.place-map .pin { font-size: clamp(11px, 2.4cqw, .85rem); }
+.place-map .pin.region .pin-label { font-size: clamp(9.5px, 2cqw, .72rem); }
+.place-map .pin.region.sea .pin-label { font-size: clamp(11px, 2.4cqw, .85rem); }
 .place-map .placed .mark { animation: settle .45s cubic-bezier(.2, .8, .3, 1.4); }
 @keyframes settle { from { scale: 1.8; } }
 

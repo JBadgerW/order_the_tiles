@@ -96,7 +96,7 @@ function feature(f, puzzle, proj) {
   return {
     ...common,
     mark: f.mark === 'triangle' ? 'triangle' : 'dot',
-    side: f.label === 'left' ? 'left' : 'right',
+    side: ['left', 'above', 'below'].includes(f.label) ? f.label : 'right',
     snap: f.snap ?? puzzle.snap ?? POINT_SNAP,
     ...proj.toMap(pair),
   };

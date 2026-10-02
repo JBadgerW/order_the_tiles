@@ -128,8 +128,8 @@ pairs for outlines.
 
 **Points** use `lat`/`lon` (or `x`/`y`) and show a dot; `"mark": "triangle"` is for mountains. A drop
 counts within `snap` of the spot: a fraction of the map's width, `0.04` unless the puzzle sets its own
-`"snap"`. Make it smaller when places are close together. `"label": "left"` puts the name on the
-left of the dot when the right side is crowded.
+`"snap"`. Make it smaller when places are close together. When the right side of the dot is crowded,
+`"label"` can put the name `"left"`, `"above"` or `"below"` it instead.
 
 **Regions** have an `area` outline, a list of `[lat, lon]` pairs. A drop counts anywhere inside it, or
 within `snap` of its edge (`0.01` unless the region sets its own). `"at"` is where the name sits once
