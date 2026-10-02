@@ -16,6 +16,14 @@
     "thumb": "images/Mediterranean_Sea_location_map.svg.webp"
   },
   {
+    "id": "ancient-mediterranean",
+    "title": "The Ancient Mediterranean",
+    "type": "place",
+    "count": 24,
+    "description": "Rome, Carthage, Alexandria and the lands, islands and rivers around the Mediterranean.",
+    "thumb": "images/mediterranean-relief-map.jpg"
+  },
+  {
     "id": "trojan-war",
     "title": "The Trojan War",
     "type": "text",
