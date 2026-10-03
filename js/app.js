@@ -197,6 +197,8 @@ function celebrate({ time, rate, moves }, mode, terms) {
       el('p', { class: 'win-mode' }, mode === 'easy' ? 'Easy mode' : 'Hard mode'),
       el('div', { class: 'win-actions' },
         el('a', { class: 'btn primary', href: '#/' }, 'Back to menu'),
+        // Same URL, so re-run the route: a fresh, reshuffled board (show() drops this overlay).
+        el('button', { type: 'button', class: 'btn', onclick: () => { document.removeEventListener('keydown', onKey); route(); } }, 'Play again'),
         el('button', { type: 'button', class: 'btn', onclick: close }, 'View puzzle'),
       ),
     ),
