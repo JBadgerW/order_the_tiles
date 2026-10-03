@@ -20,7 +20,7 @@ python3 -m http.server 8000
 ## Hosting
 
 - **GitHub Pages:** push the repo, then go to **Settings → Pages → Deploy from a branch → `main` / root**.
-  The site appears at `https://<user>.github.io/order_the_tiles/`.
+  The site appears at `https://jbadgerw.github.io/order_the_tiles/`.
 - **Your own network:** copy the folder to any web server (nginx, Apache, IIS),
   or run `python3 -m http.server 8000` on a machine students can reach.
 
