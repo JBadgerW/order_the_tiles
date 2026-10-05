@@ -1,0 +1,12 @@
+{
+  "title": "Trojan War Battlefield",
+  "type": "image",
+  "description": "Unscramble the Trojan War battlefield.",
+  "src": "images/trojan_plain.png",
+  "rows": 2,
+  "cols": 8,
+  "credit": {
+    "text": "Based on Mr Watson's terrible sketch",
+    "url": ""
+  }
+}

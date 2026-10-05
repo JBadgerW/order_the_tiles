@@ -45,5 +45,13 @@
     "count": 32,
     "description": "Put the continents and oceans back where they belong.",
     "thumb": "images/world_map.png"
+  },
+  {
+    "id": "trojan_war_battlefield",
+    "title": "Trojan War Battlefield",
+    "type": "image",
+    "count": 16,
+    "description": "Unscramble the Trojan War battlefield.",
+    "thumb": "images/trojan_plain.png"
   }
 ]
