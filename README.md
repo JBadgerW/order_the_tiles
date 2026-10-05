@@ -45,6 +45,14 @@ Dragging a tile onto another swaps the two; no other tiles move.
 - **Devices:** mouse, touch screen (Chromebooks, iPads, phones) and keyboard all work. With the keyboard,
   Tab moves to a tile, Space picks it up, the arrow keys move it (or choose a tile to swap with), and Space drops it.
 
+## Student Achievement Tracker
+
+`student_achievement_tracker.pdf` is a one-page printable on which students record the day they first
+reach each puzzle's aim (tiles or places per minute) in Hard mode, with their rate and moves. It is
+compiled from `student_achievement_tracker.typ` (styled by `pt_style.typ`) with
+`typst compile student_achievement_tracker.typ`. The puzzle rows and aims are typed in by hand, so
+update them when the menu changes.
+
 ## Adding puzzles
 
 All puzzles live in `puzzles/`. After adding, removing, or renaming one, rebuild the menu list:
