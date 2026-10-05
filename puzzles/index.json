@@ -16,6 +16,14 @@
     "thumb": "images/Mediterranean_Sea_location_map.svg.webp"
   },
   {
+    "id": "humiv_greece",
+    "title": "Humanities IV Greece Puzzle",
+    "type": "image",
+    "count": 16,
+    "description": "Put the land and sea back where they belong.",
+    "thumb": "images/humiv_greece_places_puzzle.png"
+  },
+  {
     "id": "ancient-mediterranean",
     "title": "The Ancient Mediterranean",
     "type": "place",

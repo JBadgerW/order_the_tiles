@@ -1,0 +1,12 @@
+{
+  "title": "Humanities IV Greece Puzzle",
+  "type": "image",
+  "description": "Put the land and sea back where they belong.",
+  "src": "images/humiv_greece_places_puzzle.png",
+  "rows": 4,
+  "cols": 4,
+  "credit": {
+    "text": "Aegean Sea and Western Anatolia topographic basemap – Ikonact/Wikimedia Commons, CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Aegean_sea_and_Western_Anatolia_regions_large_topographic_basemap.svg"
+  }
+}
