@@ -32,6 +32,14 @@
     "thumb": "images/mediterranean-relief-map.jpg"
   },
   {
+    "id": "ancient_mediterranean_puzzle",
+    "title": "The Ancient Mediterranean Puzzle",
+    "type": "image",
+    "count": 18,
+    "description": "Put Rome, Carthage, Alexandria and the lands, islands and rivers around the Mediterranean back where they belong.",
+    "thumb": "images/ancient_mediterranean_puzzle.png"
+  },
+  {
     "id": "trojan-war",
     "title": "The Trojan War",
     "type": "text",

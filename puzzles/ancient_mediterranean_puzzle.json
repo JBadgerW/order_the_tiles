@@ -1,0 +1,13 @@
+{
+  "title": "The Ancient Mediterranean Puzzle",
+  "type": "image",
+  "hidden": false,
+  "description": "Unscramble the lands, islands and rivers around the Mediterranean.",
+  "src": "images/ancient_mediterranean_puzzle.png",
+  "rows": 3,
+  "cols": 6,
+  "credit": {
+    "text": "Mediterranean physical map – FreeWorldMaps.net",
+    "url": "https://www.freeworldmaps.net/"
+  }
+}
