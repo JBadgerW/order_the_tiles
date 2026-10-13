@@ -47,6 +47,13 @@
     "description": "From the wedding of Peleus and Thetis to the homecomings."
   },
   {
+    "id": "local-to-all",
+    "title": "Progressive Hebrew Understanding of God",
+    "type": "text",
+    "count": 5,
+    "description": "Order the stages of the Ancient Hebrews' Understanding of God."
+  },
+  {
     "id": "world-map",
     "title": "World Map",
     "type": "image",
