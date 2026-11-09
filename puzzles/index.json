@@ -1,80 +1,13 @@
 [
-  {
-    "id": "greece-places",
-    "title": "Humanities IV Greece: Places",
-    "type": "place",
-    "count": 18,
-    "description": "Put the cities and landmarks of the Iliad and Odyssey on the map.",
-    "thumb": "images/Aegean_sea_and_Western_Anatolia.webp"
-  },
-  {
-    "id": "mediterranean_blank",
-    "title": "Mediterranean Blank",
-    "type": "image",
-    "count": 18,
-    "description": "Put the land and sea back where they belong.",
-    "thumb": "images/Mediterranean_Sea_location_map.svg.webp"
-  },
-  {
-    "id": "humiv_greece",
-    "title": "Humanities IV Greece Puzzle",
-    "type": "image",
-    "count": 16,
-    "description": "Put the land and sea back where they belong.",
-    "thumb": "images/humiv_greece_places_puzzle.png"
-  },
-  {
-    "id": "ancient-mediterranean",
-    "title": "The Ancient Mediterranean",
-    "type": "place",
-    "count": 24,
-    "description": "Rome, Carthage, Alexandria and the lands, islands and rivers around the Mediterranean.",
-    "thumb": "images/mediterranean-relief-map.jpg"
-  },
-  {
-    "id": "ancient_mediterranean_puzzle",
-    "title": "The Ancient Mediterranean Puzzle",
-    "type": "image",
-    "count": 18,
-    "description": "Put Rome, Carthage, Alexandria and the lands, islands and rivers around the Mediterranean back where they belong.",
-    "thumb": "images/ancient_mediterranean_puzzle.png"
-  },
-  {
-    "id": "trojan-war",
-    "title": "The Trojan War",
-    "type": "text",
-    "count": 18,
-    "description": "From the wedding of Peleus and Thetis to the homecomings."
-  },
-  {
-    "id": "local-to-all",
-    "title": "Progressive Hebrew Understanding of God",
-    "type": "text",
-    "count": 5,
-    "description": "Order the stages of the Ancient Hebrews' Understanding of God."
-  },
-  {
-    "id": "world-map",
-    "title": "World Map",
-    "type": "image",
-    "count": 18,
-    "description": "Put the continents and oceans back where they belong.",
-    "thumb": "images/world_map.png"
-  },
-  {
-    "id": "world-map_harder",
-    "title": "World Map: Harder",
-    "type": "image",
-    "count": 32,
-    "description": "Put the continents and oceans back where they belong.",
-    "thumb": "images/world_map.png"
-  },
-  {
-    "id": "trojan_war_battlefield",
-    "title": "Trojan War Battlefield",
-    "type": "image",
-    "count": 16,
-    "description": "Unscramble the Trojan War battlefield.",
-    "thumb": "images/trojan_plain.png"
-  }
+  "parthenon",
+  "greece-places",
+  "mediterranean_blank",
+  "humiv_greece",
+  "ancient-mediterranean",
+  "ancient_mediterranean_puzzle",
+  "trojan-war",
+  "local-to-all",
+  "world-map",
+  "world-map_harder",
+  "trojan_war_battlefield"
 ]

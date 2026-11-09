@@ -1,0 +1,12 @@
+{
+  "title": "Acropolis and the Parthenon",
+  "type": "image",
+  "description": "Unscramble the Acropolis, where the Parthenon is.",
+  "src": "images/acropolis-cutaway-parthenon-athens.webp",
+  "rows": 4,
+  "cols": 6,
+  "credit": {
+    "text": "Acropolis featuring the Parthenon's interior",
+    "url": "https://www.architecturecourses.org/learn/parthenon-design-and-architectural-features"
+  }
+}

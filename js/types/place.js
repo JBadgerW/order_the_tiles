@@ -8,6 +8,8 @@
 // within `snap` of it. Distances are fractions of the map's width.
 import { el, loadImage, shuffledOrder, PUZZLE_DIR } from '../util.js';
 
+export const count = puzzle => puzzle.features.length;
+
 export const terms = { pieces: 'places', short: 'places', rate: 'places per minute', moves: 'Tries' };
 
 export const instructions =

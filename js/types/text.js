@@ -3,6 +3,8 @@ import { el, richText } from '../util.js';
 
 export const defaultDrag = 'swap';
 
+export const count = puzzle => puzzle.items.length;
+
 export const terms = { pieces: 'story cards', short: 'cards', rate: 'tiles per minute', moves: 'Moves' };
 
 export const instructions =

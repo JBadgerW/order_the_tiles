@@ -4,6 +4,8 @@ import { el, loadImage, PUZZLE_DIR } from '../util.js';
 
 export const defaultDrag = 'swap';
 
+export const count = puzzle => puzzle.rows * puzzle.cols;
+
 export const terms = { pieces: 'picture tiles', short: 'tiles', rate: 'tiles per minute', moves: 'Moves' };
 
 export const instructions = 'Drag a tile onto another to swap them and rebuild the picture.';

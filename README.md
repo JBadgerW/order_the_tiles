@@ -55,10 +55,22 @@ update them when the menu changes.
 
 ## Adding puzzles
 
-All puzzles live in `puzzles/`. After adding, removing, or renaming one, rebuild the menu list:
+All puzzles live in `puzzles/`, one file per puzzle. The file name (without `.json`) is the puzzle's id.
+
+The menu is `puzzles/index.json`: a list of ids in the order they appear.
+
+```json
+["parthenon", "greece-places", "trojan-war", "world-map"]
+```
+
+To add a puzzle to the menu, put its id in the list. To move it, move its id. To hide it, take its id
+out; it still plays from a direct link (`#/play/<id>`). Everything shown on a menu card (title,
+description, picture, number of tiles) comes from the puzzle's own file.
+
+After a change, check for typos and missing files:
 
 ```sh
-python3 tools/build_index.py
+python3 tools/check_puzzles.py
 ```
 
 ### Text puzzle
@@ -88,7 +100,7 @@ python3 tools/typ_to_puzzle.py sources/trojan_war_outline_cards.typ \
   --description "From the wedding of Peleus and Thetis to the homecomings."
 ```
 
-This writes `puzzles/trojan-war.json` and rebuilds the index. Keep the `.typ` in `sources/`
+This writes `puzzles/trojan-war.json` and adds `trojan-war` to the end of the menu if it isn't there yet. Keep the `.typ` in `sources/`
 so you can print the cards and regenerate the puzzle from the same file.
 
 ### Image puzzle
@@ -162,12 +174,10 @@ The page isn't linked from the menu, but anyone with the address can open it.
 | Field | Applies to | Effect |
 |---|---|---|
 | `description` | all | A line under the title on the menu card |
-| `order` | all | A number that sets the menu position (lower comes first); otherwise puzzles are listed alphabetically |
 | `drag` | all | `"insert"` makes a dropped tile slide into place while the others shift over (the default is `"swap"`) |
 | `columns` | text | A fixed number of columns in place of the automatic layout |
 | `credit` | all | Small print under the puzzle, e.g. `{"text": "World Map with Countries – GISGeography", "url": "https://gisgeography.com/world-map/"}` shows **Source: <link>**. Add `"prefix"` to change the word "Source:" |
 | `thumb` | image, place | A different menu thumbnail, or `null` to hide the picture (so the menu doesn't give away the answer) |
-| `hidden` | all | `true` leaves the puzzle off the menu; it still plays from a direct link (`#/play/<id>`). Delete the line and rerun `build_index.py` to list it |
 
 ## Files
 
@@ -181,7 +191,7 @@ js/types/image.js     cuts an image into tiles
 js/types/place.js     place puzzles: names dragged onto a blank map
 js/draw.js            the drawing page for place puzzles (#/draw/<id>)
 js/util.js            shared helpers
-puzzles/              puzzle JSON files, index.json, images/
+puzzles/              puzzle JSON files, index.json (the menu), images/
 sources/              original source files (e.g. Typst card tables)
-tools/                build_index.py, typ_to_puzzle.py
+tools/                check_puzzles.py, typ_to_puzzle.py
 ```

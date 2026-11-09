@@ -13,8 +13,28 @@ const TYPES = { text: textType, image: imageType, place: placeType };
 const MODE_KEY = 'order-the-tiles:mode';
 const app = document.getElementById('app');
 
-let indexPromise = null;
-const loadIndex = () => (indexPromise ??= fetchJSON(PUZZLE_DIR + 'index.json'));
+// index.json is just the menu: puzzle ids in the order they appear. Each
+// card's title, description and picture come from the puzzle's own file.
+// A puzzle left off the list still plays from a direct link.
+let menuPromise = null;
+const loadMenu = () => (menuPromise ??= fetchJSON(PUZZLE_DIR + 'index.json').then(ids =>
+  Promise.all(ids.map(id => fetchJSON(`${PUZZLE_DIR}${encodeURIComponent(id)}.json`).then(
+    puzzle => menuEntry(id, puzzle),
+    err => { console.error(err); return null; },  // one bad file shouldn't sink the menu
+  ))).then(entries => entries.filter(Boolean))));
+
+function menuEntry(id, puzzle) {
+  const type = TYPES[puzzle.type];
+  return {
+    id,
+    type: puzzle.type,
+    title: puzzle.title ?? id,
+    description: puzzle.description,
+    count: type?.count(puzzle) ?? 0,
+    // `thumb` overrides the picture; `null` hides it so the menu doesn't give away the answer.
+    thumb: puzzle.thumb !== undefined ? puzzle.thumb : puzzle.src,
+  };
+}
 
 const getMode = () => (store.get(MODE_KEY, 'easy') === 'hard' ? 'hard' : 'easy');
 
@@ -80,7 +100,7 @@ function puzzleCard(p) {
 
 async function showMenu() {
   document.title = 'Order the Tiles';
-  const puzzles = await loadIndex();
+  const puzzles = await loadMenu();
   show(el('main', { class: 'screen menu' },
     el('header', { class: 'menu-head' },
       el('div', {},
@@ -91,7 +111,7 @@ async function showMenu() {
     ),
     puzzles.length
       ? el('div', { class: 'cards' }, puzzles.map(puzzleCard))
-      : el('p', {}, 'No puzzles yet. Add one to the puzzles folder and run tools/build_index.py.'),
+      : el('p', {}, 'No puzzles yet. Add one to the puzzles folder and put its id in puzzles/index.json.'),
   ));
 }
 

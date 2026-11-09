@@ -10,7 +10,8 @@ skipped.
         --id trojan-war --title "The Trojan War" \\
         --description "From the wedding of Peleus and Thetis to the homecomings."
 
-Writes puzzles/<id>.json and rebuilds puzzles/index.json.
+Writes puzzles/<id>.json and adds <id> to the end of the menu (puzzles/index.json)
+if it isn't there yet.
 """
 import argparse
 import json
@@ -19,7 +20,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_index  # noqa: E402
+import check_puzzles  # noqa: E402
 
 
 def table_cells(source):
@@ -100,10 +101,12 @@ def main():
     puzzle["source"] = args.typ.as_posix()
     puzzle["items"] = items
 
-    out = build_index.PUZZLES / f"{args.id}.json"
+    out = check_puzzles.PUZZLES / f"{args.id}.json"
     out.write_text(json.dumps(puzzle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Wrote {out.relative_to(build_index.ROOT)} with {len(items)} cards.")
-    return build_index.build()
+    print(f"Wrote {out.relative_to(check_puzzles.ROOT)} with {len(items)} cards.")
+    if check_puzzles.add_to_menu(args.id):
+        print(f"Added {args.id} to the end of the menu in puzzles/index.json.")
+    return 0
 
 
 if __name__ == "__main__":
