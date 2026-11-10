@@ -1,13 +1,50 @@
 [
-  "parthenon",
-  "greece-places",
-  "mediterranean_blank",
-  "humiv_greece",
-  "ancient-mediterranean",
-  "ancient_mediterranean_puzzle",
-  "trojan-war",
-  "local-to-all",
-  "world-map",
-  "world-map_harder",
-  "trojan_war_battlefield"
+  {
+    "id": "parthenon",
+    "visible": true
+  },
+  {
+    "id": "greece-places",
+    "visible": true
+  },
+  {
+    "id": "humiv_greece",
+    "visible": true
+  },
+  {
+    "id": "ancient_mediterranean_puzzle",
+    "visible": true
+  },
+  {
+    "id": "trojan-war",
+    "visible": false
+  },
+  {
+    "id": "local-to-all",
+    "visible": false
+  },
+  {
+    "id": "world-map",
+    "visible": false
+  },
+  {
+    "id": "mediterranean-basics",
+    "visible": true
+  },
+  {
+    "id": "mediterranean_blank",
+    "visible": true
+  },
+  {
+    "id": "ancient-mediterranean",
+    "visible": true
+  },
+  {
+    "id": "world-map_harder",
+    "visible": true
+  },
+  {
+    "id": "trojan_war_battlefield",
+    "visible": false
+  }
 ]

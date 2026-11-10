@@ -11,7 +11,8 @@ skipped.
         --description "From the wedding of Peleus and Thetis to the homecomings."
 
 Writes puzzles/<id>.json and adds <id> to the end of the menu (puzzles/index.json)
-if it isn't there yet.
+if it isn't there yet. Pass --hidden to add it with "visible": false, so it
+plays from a direct link but doesn't show on the menu.
 """
 import argparse
 import json
@@ -89,6 +90,8 @@ def main():
     parser.add_argument("--id", required=True, help="file name / URL id, e.g. trojan-war")
     parser.add_argument("--title", required=True)
     parser.add_argument("--description")
+    parser.add_argument("--hidden", action="store_true",
+                        help='add it to index.json with "visible": false (direct link only)')
     args = parser.parse_args()
 
     items = [c for c in (clean(c) for c in table_cells(args.typ.read_text(encoding="utf-8"))) if c]
@@ -104,8 +107,9 @@ def main():
     out = check_puzzles.PUZZLES / f"{args.id}.json"
     out.write_text(json.dumps(puzzle, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Wrote {out.relative_to(check_puzzles.ROOT)} with {len(items)} cards.")
-    if check_puzzles.add_to_menu(args.id):
-        print(f"Added {args.id} to the end of the menu in puzzles/index.json.")
+    if check_puzzles.add_to_menu(args.id, visible=not args.hidden):
+        where = "as hidden (visible: false)" if args.hidden else "to the end of the menu"
+        print(f"Added {args.id} {where} in puzzles/index.json.")
     return 0
 
 

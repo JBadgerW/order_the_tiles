@@ -68,14 +68,20 @@ update them when the menu changes.
 
 All puzzles live in `puzzles/`, one file per puzzle. The file name (without `.json`) is the puzzle's id.
 
-The menu is `puzzles/index.json`: a list of ids in the order they appear.
+The menu is `puzzles/index.json`: a list of entries in the order they appear.
 
 ```json
-["parthenon", "greece-places", "trojan-war", "world-map"]
+[
+  { "id": "parthenon", "visible": true },
+  { "id": "trojan-war", "visible": true },
+  { "id": "iliad-book-6-review", "visible": false }
+]
 ```
 
-To add a puzzle to the menu, put its id in the list. To move it, move its id. To hide it, take its id
-out; it still plays from a direct link (`#/play/<id>`). Everything shown on a menu card (title,
+To add a puzzle to the menu, add an entry with its id. To move it, move its entry. To hide it without
+losing it (say, a study set made for one class), set `"visible": false`; it stays in the list but
+doesn't show on the menu, and still plays from a direct link (`#/play/<id>`), which you can hand to
+students. Set it back to `true` to bring it back. Everything shown on a menu card (title,
 description, picture, number of tiles) comes from the puzzle's own file.
 
 After a change, check for typos and missing files:
@@ -111,7 +117,8 @@ python3 tools/typ_to_puzzle.py sources/trojan_war_outline_cards.typ \
   --description "From the wedding of Peleus and Thetis to the homecomings."
 ```
 
-This writes `puzzles/trojan-war.json` and adds `trojan-war` to the end of the menu if it isn't there yet. Keep the `.typ` in `sources/`
+This writes `puzzles/trojan-war.json` and adds `trojan-war` to the end of the menu if it isn't there yet (add
+`--hidden` to list it with `"visible": false` instead). Keep the `.typ` in `sources/`
 so you can print the cards and regenerate the puzzle from the same file.
 
 ### Image puzzle

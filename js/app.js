@@ -14,15 +14,17 @@ const TYPES = { text: textType, image: imageType, place: placeType };
 const MODE_KEY = 'order-the-tiles:mode';
 const app = document.getElementById('app');
 
-// index.json is just the menu: puzzle ids in the order they appear. Each
-// card's title, description and picture come from the puzzle's own file.
-// A puzzle left off the list still plays from a direct link.
+// index.json is just the menu: entries like { "id": "trojan-war", "visible": true }
+// in the order they appear. Each card's title, description and picture come
+// from the puzzle's own file. An entry with "visible": false is skipped, as is
+// a puzzle left off the list; either still plays from a direct link.
 let menuPromise = null;
-const loadMenu = () => (menuPromise ??= fetchJSON(PUZZLE_DIR + 'index.json').then(ids =>
-  Promise.all(ids.map(id => fetchJSON(`${PUZZLE_DIR}${encodeURIComponent(id)}.json`).then(
-    puzzle => menuEntry(id, puzzle),
-    err => { console.error(err); return null; },  // one bad file shouldn't sink the menu
-  ))).then(entries => entries.filter(Boolean))));
+const loadMenu = () => (menuPromise ??= fetchJSON(PUZZLE_DIR + 'index.json').then(entries =>
+  Promise.all(entries.filter(e => e.visible !== false).map(({ id }) =>
+    fetchJSON(`${PUZZLE_DIR}${encodeURIComponent(id)}.json`).then(
+      puzzle => menuEntry(id, puzzle),
+      err => { console.error(err); return null; },  // one bad file shouldn't sink the menu
+    ))).then(cards => cards.filter(Boolean))));
 
 function menuEntry(id, puzzle) {
   const type = TYPES[puzzle.type];
@@ -118,7 +120,7 @@ async function showMenu() {
     ),
     puzzles.length
       ? el('div', { class: 'cards' }, puzzles.map(puzzleCard))
-      : el('p', {}, 'No puzzles yet. Add one to the puzzles folder and put its id in puzzles/index.json.'),
+      : el('p', {}, 'No puzzles yet. Add one to the puzzles folder and add its id to puzzles/index.json with "visible": true.'),
   ));
 }
 
