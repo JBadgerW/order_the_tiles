@@ -10,6 +10,9 @@ export const terms = { pieces: 'story cards', short: 'cards', rate: 'tiles per m
 export const instructions =
   'Drag a card onto another to swap them. Put them in order left to right, then top to bottom.';
 
+export const chunkInstructions =
+  'Drag a card to move it. Cards that belong next to each other stick together and move as one. Put them in order left to right, then top to bottom.';
+
 // Pick a card width from how long the items are, so long sentences get
 // wide cards (fewer columns) and short ones pack into many columns.
 function minCardWidth(items) {
@@ -28,6 +31,7 @@ export async function prepare(puzzle) {
 
   return {
     tiles,
+    layout: { kind: 'sequence' },
     configureBoard(board) {
       board.classList.add('text-board');
       if (puzzle.columns) {

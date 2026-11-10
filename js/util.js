@@ -34,6 +34,21 @@ export function shuffledOrder(keys) {
   return order; // only possible with heavy duplication; still shuffled
 }
 
+// For Chunks mode: a shuffle in which no two tiles that belong side by side
+// start side by side, so no chunk is handed out for free. `cols` is the
+// picture's width for a grid (checks right and lower neighbours), or 0 for
+// a sequence of cards (checks the next card). Tiny puzzles may have no such
+// order; then the last try is used.
+export function chunkShuffle(keys, cols = 0) {
+  const n = keys.length;
+  const joined = order => order.some((tile, p) => cols
+    ? ((p + 1) % cols && (tile + 1) % cols && order[p + 1] === tile + 1) || order[p + cols] === tile + cols
+    : order[p + 1] === tile + 1);
+  let order = shuffledOrder(keys);
+  for (let attempt = 0; attempt < 2000 && n > 2 && joined(order); attempt++) order = shuffledOrder(keys);
+  return order;
+}
+
 export function formatTime(ms) {
   const total = Math.round(ms / 1000);
   const h = Math.floor(total / 3600);

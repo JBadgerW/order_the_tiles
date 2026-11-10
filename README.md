@@ -39,6 +39,17 @@ Dragging a tile onto another swaps the two; no other tiles move.
   tray sits beside the map; on narrow ones, underneath.
 - **Easy / Hard:** chosen on the menu (the browser remembers the choice). In Easy mode, tiles in the right
   spot get a green edge, and map names snap into place from 1.5× farther away. Hard mode gives no hints.
+- **Chunks:** a third choice on the menu, for text and image puzzles. It works like a jigsaw: tiles that
+  sit next to each other in the right order stick together, and a group moves as one piece, so students
+  build the answer in sections. A join is only ever correct, so a group never has to come apart. No two
+  tiles that belong together start side by side.
+  - Text: drag a card or chunk between two others and the rest slide over. A chunk can wrap onto the next
+    row; a thick edge and ↪ mark where it continues.
+  - Image: a group shifts by whole cells and must stay on the board. A group it lands on moves aside
+    whole (a straight swap when it fits), and loose tiles fill the gaps. If there is no room, the drop is
+    refused and the group flies back. If groups get stuck, double-click (or double-tap) one to loosen it
+    into single tiles; with the keyboard, press L. They stick again once moved.
+  - Map puzzles have no Chunks mode and play as Easy.
 - **Shuffling:** no tile ever starts in its correct spot.
 - **Moves:** each drag that changes the order counts as one move.
 - **Tiles per minute:** the number of tiles ÷ minutes taken.

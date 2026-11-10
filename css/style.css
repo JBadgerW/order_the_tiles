@@ -12,6 +12,9 @@
   --correct: #3c9a5f;
   --correct-soft: rgba(60, 154, 95, .14);
   --swap: #d08a2e;
+  --blocked: #b5473a;
+  /* Chunks mode: each joined group gets one of these outline colors */
+  --chunk-1: #2f6f73; --chunk-2: #3b5bb5; --chunk-3: #7a4bb0; --chunk-4: #b0407a; --chunk-5: #9a6a1f; --chunk-6: #4f7a28;
   --shadow: 0 1px 2px rgba(31, 36, 48, .06), 0 4px 14px rgba(31, 36, 48, .07);
   --shadow-lift: 0 14px 34px rgba(31, 36, 48, .22);
   --radius: 12px;
@@ -34,6 +37,8 @@
     --correct: #5cc285;
     --correct-soft: rgba(92, 194, 133, .16);
     --swap: #e7a24a;
+    --blocked: #e07a6c;
+    --chunk-1: #5fb3b3; --chunk-2: #7f9cf0; --chunk-3: #b28ae6; --chunk-4: #e27ab0; --chunk-5: #d8a84f; --chunk-6: #8fbf5a;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .25);
     --shadow-lift: 0 14px 34px rgba(0, 0, 0, .5);
     color-scheme: dark;
@@ -43,7 +48,9 @@
   --bg: #171a20; --surface: #22262e; --surface-2: #2c313b; --ink: #eceae5;
   --ink-soft: #a5a9b3; --line: #3a404b; --accent: #5fb3b3; --accent-ink: #0f1a1b;
   --gold: #d8b36a; --correct: #5cc285; --correct-soft: rgba(92, 194, 133, .16);
-  --swap: #e7a24a; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .25);
+  --swap: #e7a24a; --blocked: #e07a6c;
+  --chunk-1: #5fb3b3; --chunk-2: #7f9cf0; --chunk-3: #b28ae6; --chunk-4: #e27ab0; --chunk-5: #d8a84f; --chunk-6: #8fbf5a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .25);
   --shadow-lift: 0 14px 34px rgba(0, 0, 0, .5); color-scheme: dark;
 }
 
@@ -148,6 +155,7 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 }
 .badge-easy { background: var(--correct-soft); color: var(--correct); }
 .badge-hard { background: var(--surface-2); color: var(--ink); }
+.badge-chunks { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
 @media (max-width: 600px) {
   .play-bar { grid-template-columns: auto 1fr; }
   .play-bar h1 { grid-column: 1 / -1; grid-row: 1; text-align: left; }
@@ -236,6 +244,96 @@ body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: non
 .image-tile.ghost { border-radius: 6px; }
 .image-board.solved { gap: 0; }
 .image-board.solved .image-tile { border-radius: 0; box-shadow: none; }
+
+/* ---------- Chunks mode ---------- */
+/* Every joined group is drawn as one piece: a thick outline in the group's
+   own color (--chunk, set per tile by the board) around its outside edge,
+   and no lines inside it. Each side's line width is a variable, so the
+   sides where tiles are joined can turn their line off. */
+.tile.blocked { box-shadow: inset 0 0 0 4px var(--blocked) !important; opacity: .7; }
+.board.cant-drop, body.is-dragging:has(.cant-drop) { cursor: not-allowed; }
+.tile.snap { animation: snap .45s cubic-bezier(.2, .8, .3, 1.4); }
+@keyframes snap { 40% { scale: 1.04; } }
+
+.chunk-board .tile { --w: 0px; }
+.chunk-board .tile.chunked { --w: 3px; }
+.chunk-board .tile.link-l, .chunk-board .tile.wrap-in { --wl: 0px; }
+.chunk-board .tile.link-r, .chunk-board .tile.wrap-out { --wr: 0px; }
+.chunk-board .tile.link-u { --wt: 0px; }
+.chunk-board .tile.link-d { --wb: 0px; }
+
+/* Text: joined cards reach across the gap and touch. A chunk that wraps to
+   the next row is left open at the break, with ↪ where it continues. */
+.chunk-board .text-tile.chunked {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--chunk) 9%, var(--surface));
+  box-shadow:
+    inset var(--wl, var(--w)) 0 0 0 var(--chunk), inset calc(-1 * var(--wr, var(--w))) 0 0 0 var(--chunk),
+    inset 0 var(--w) 0 0 var(--chunk), inset 0 calc(-1 * var(--w)) 0 0 var(--chunk),
+    var(--shadow);
+}
+.chunk-board .text-tile.link-r { margin-right: -7px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.chunk-board .text-tile.link-l { margin-left: -7px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.chunk-board .text-tile.wrap-out { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.chunk-board .text-tile.wrap-in { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.chunk-board .text-tile.wrap-out::after {
+  content: "↪"; position: absolute; right: 8px; bottom: 6px;
+  font: 700 1rem var(--font); color: var(--chunk);
+}
+.ghost-stack {
+  box-shadow: 6px 6px 0 -1px var(--surface), 6px 6px 0 0 var(--line),
+              12px 12px 0 -1px var(--surface), 12px 12px 0 0 var(--line), var(--shadow-lift);
+}
+.stack-count {
+  position: absolute; top: -10px; right: -10px;
+  padding: 2px 9px; border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  font: 700 .8rem var(--font); white-space: nowrap;
+}
+
+/* Pictures: no grid gap. Each tile draws a background-colored band on the
+   sides that aren't joined (two bands make a 6px gap between pieces), and a
+   chunk's outline just inside that band. Joined sides draw neither, so a
+   group shows as one seamless piece of the picture. */
+.chunk-board.image-board { gap: 0; }
+.chunk-board.image-board:not(.solved) .image-tile {
+  --g: 3px;
+  border-radius: 0;
+  box-shadow:
+    inset var(--gl, var(--g)) 0 0 0 var(--bg), inset calc(-1 * var(--gr, var(--g))) 0 0 0 var(--bg),
+    inset 0 var(--gt, var(--g)) 0 0 var(--bg), inset 0 calc(-1 * var(--gb, var(--g))) 0 0 var(--bg),
+    inset calc(var(--g) + var(--wl, var(--w))) 0 0 0 var(--chunk, transparent),
+    inset calc(-1 * (var(--g) + var(--wr, var(--w)))) 0 0 0 var(--chunk, transparent),
+    inset 0 calc(var(--g) + var(--wt, var(--w))) 0 0 var(--chunk, transparent),
+    inset 0 calc(-1 * (var(--g) + var(--wb, var(--w)))) 0 0 var(--chunk, transparent);
+}
+.chunk-board .image-tile.link-l { --gl: 0px; --wl: -3px; }
+.chunk-board .image-tile.link-r { --gr: 0px; --wr: -3px; }
+.chunk-board .image-tile.link-u { --gt: 0px; --wt: -3px; }
+.chunk-board .image-tile.link-d { --gb: 0px; --wb: -3px; }
+/* Inside corners of a picture group: the tile in the bend fills in the
+   corner of the gap (background) and of the outline (chunk color). */
+.chunk-board.image-board:not(.solved) .image-tile.chunked::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  --cg: linear-gradient(var(--bg), var(--bg));
+  --cl: linear-gradient(var(--chunk), var(--chunk));
+  background:
+    var(--gtl, none) left top / 3px 3px no-repeat, var(--gtr, none) right top / 3px 3px no-repeat,
+    var(--gbl, none) left bottom / 3px 3px no-repeat, var(--gbr, none) right bottom / 3px 3px no-repeat,
+    var(--ltl, none) left top / 6px 6px no-repeat, var(--ltr, none) right top / 6px 6px no-repeat,
+    var(--lbl, none) left bottom / 6px 6px no-repeat, var(--lbr, none) right bottom / 6px 6px no-repeat;
+}
+.chunk-board .image-tile.corner-tl { --gtl: var(--cg); --ltl: var(--cl); }
+.chunk-board .image-tile.corner-tr { --gtr: var(--cg); --ltr: var(--cl); }
+.chunk-board .image-tile.corner-bl { --gbl: var(--cg); --lbl: var(--cl); }
+.chunk-board .image-tile.corner-br { --gbr: var(--cg); --lbr: var(--cl); }
+.chunk-board .tile.placeholder::after { display: none; }
+.group-ghost {
+  position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, .3));
+  opacity: .96;
+}
+.group-ghost > .tile { position: absolute; margin: 0; border-radius: 0; box-shadow: none; }
 
 /* Place puzzles: a blank map with a tray of names underneath */
 .place-frame {

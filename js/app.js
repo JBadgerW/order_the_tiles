@@ -3,6 +3,7 @@
 //   #/play/<id>   a puzzle (puzzles/<id>.json)
 //   #/draw/<id>   a place puzzle's drawing page, for teachers (not linked from the menu)
 import { createBoard } from './board.js';
+import { createChunkBoard } from './chunkboard.js';
 import { drawBoard } from './draw.js';
 import * as textType from './types/text.js';
 import * as imageType from './types/image.js';
@@ -36,7 +37,15 @@ function menuEntry(id, puzzle) {
   };
 }
 
-const getMode = () => (store.get(MODE_KEY, 'easy') === 'hard' ? 'hard' : 'easy');
+const MODES = {
+  easy: { label: 'Easy', hint: 'Tiles in the right spot get a green edge. Map names snap into place from farther away.' },
+  hard: { label: 'Hard', hint: 'No hints: you won’t know a tile is right until the whole puzzle is. Map names must land closer.' },
+  chunks: { label: 'Chunks', hint: 'Tiles that belong next to each other stick together, so you can move whole sections at once. Map puzzles play as Easy.' },
+};
+const getMode = () => {
+  const mode = store.get(MODE_KEY, 'easy');
+  return Object.hasOwn(MODES, mode) ? mode : 'easy';
+};
 
 function show(...nodes) {
   document.querySelector('.overlay')?.remove();
@@ -60,17 +69,15 @@ function showError(err) {
 
 function modeToggle() {
   const hint = el('p', { class: 'mode-hint' });
-  const buttons = ['easy', 'hard'].map(mode => el('button', {
+  const buttons = Object.keys(MODES).map(mode => el('button', {
     type: 'button', class: 'seg', 'data-mode': mode,
     onclick: () => { store.set(MODE_KEY, mode); update(); },
-  }, mode === 'easy' ? 'Easy' : 'Hard'));
+  }, MODES[mode].label));
 
   function update() {
     const mode = getMode();
     buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
-    hint.textContent = mode === 'easy'
-      ? 'Tiles in the right spot get a green edge. Map names snap into place from farther away.'
-      : 'No hints: you won’t know a tile is right until the whole puzzle is. Map names must land closer.';
+    hint.textContent = MODES[mode].hint;
   }
   update();
 
@@ -123,16 +130,22 @@ async function showPuzzle(id) {
   if (!type) throw new Error(`Unknown puzzle type "${puzzle.type}" in ${id}.json`);
   document.title = `${puzzle.title} · Order the Tiles`;
 
-  const mode = getMode();
-  // A type can bring its own board; otherwise tiles go on the ordering board.
-  const { tiles, configureBoard, createBoard: typeBoard } = await type.prepare(puzzle);
+  // A type can bring its own board; otherwise tiles go on the ordering board,
+  // or the chunk board in Chunks mode. Boards of their own (maps) have no
+  // Chunks mode and play as Easy.
+  const { tiles, layout, configureBoard, createBoard: typeBoard } = await type.prepare(puzzle);
+  const chosen = getMode();
+  const mode = chosen === 'chunks' && typeBoard ? 'easy' : chosen;
+  const chunks = mode === 'chunks';
   let moves = 0;
   let started = 0;
   const moveCount = el('b', {}, '0');
-  const note = el('p', { class: 'instructions' }, type.instructions);
+  const note = el('p', { class: 'instructions' }, (chunks && type.chunkInstructions) || type.instructions);
 
-  const board = (typeBoard ?? createBoard)({
+  const board = (typeBoard ?? (chunks ? createChunkBoard : createBoard))({
     tiles,
+    layout,
+    noun: type.terms.short,
     configureBoard,
     footer: creditLine(puzzle.credit),
     dragStyle: puzzle.drag || type.defaultDrag,
@@ -157,7 +170,7 @@ async function showPuzzle(id) {
       el('a', { class: 'btn quiet', href: '#/' }, '← Menu'),
       el('h1', {}, puzzle.title),
       el('div', { class: 'stats' },
-        el('span', { class: `badge badge-${mode}` }, mode === 'easy' ? 'Easy' : 'Hard'),
+        el('span', { class: `badge badge-${mode}` }, MODES[mode].label),
         el('span', { class: 'moves' }, `${type.terms.moves} `, moveCount),
       ),
     ),
@@ -214,7 +227,7 @@ function celebrate({ time, rate, moves }, mode, terms) {
         stat(rate, terms.rate),
         stat(moves, terms.moves.toLowerCase()),
       ),
-      el('p', { class: 'win-mode' }, mode === 'easy' ? 'Easy mode' : 'Hard mode'),
+      el('p', { class: 'win-mode' }, `${MODES[mode].label} mode`),
       el('div', { class: 'win-actions' },
         el('a', { class: 'btn primary', href: '#/' }, 'Back to menu'),
         // Same URL, so re-run the route: a fresh, reshuffled board (show() drops this overlay).

@@ -10,6 +10,9 @@ export const terms = { pieces: 'picture tiles', short: 'tiles', rate: 'tiles per
 
 export const instructions = 'Drag a tile onto another to swap them and rebuild the picture.';
 
+export const chunkInstructions =
+  'Drag a tile or group to move it. Pieces that fit together stick. If groups get stuck, double-click one to loosen it.';
+
 export async function prepare(puzzle) {
   const { rows, cols } = puzzle;
   const src = PUZZLE_DIR + puzzle.src;
@@ -40,6 +43,7 @@ export async function prepare(puzzle) {
 
   return {
     tiles,
+    layout: { kind: 'grid', rows, cols },
     // The wrapper gets the size so anything under the board (like a credit)
     // lines up with the picture's edges.
     configureBoard(board, wrapper) {
